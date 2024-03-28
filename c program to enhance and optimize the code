@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#define ARRAY_SIZE 1000000
+int compute(int a, int b) {
+    return a + b;
+}
+void optimized_compute(int *arr1, int *arr2, int *result) {
+    for (int i = 0; i < ARRAY_SIZE; i += 4) {
+        result[i] = compute(arr1[i], arr2[i]);
+        result[i+1] = compute(arr1[i+1], arr2[i+1]);
+        result[i+2] = compute(arr1[i+2], arr2[i+2]);
+        result[i+3] = compute(arr1[i+3], arr2[i+3]);
+    }
+}
+int main() {
+    int *arr1 = (int *)malloc(ARRAY_SIZE * sizeof(int));
+    int *arr2 = (int *)malloc(ARRAY_SIZE * sizeof(int));
+    int *result = (int *)malloc(ARRAY_SIZE * sizeof(int));
+    srand(time(NULL));
+    for (int i = 0; i < ARRAY_SIZE; i++) {
+        arr1[i] = rand() % 100;
+        arr2[i] = rand() % 100;
+    }
+    clock_t start = clock();
+    for (int i = 0; i < ARRAY_SIZE; i++) {
+        result[i] = compute(arr1[i], arr2[i]);
+    }
+    clock_t end = clock();
+    double time_taken = ((double)(end - start)) / CLOCKS_PER_SEC;
+    printf("Time taken without optimization: %f seconds\n", time_taken);
+    start = clock();
+    optimized_compute(arr1, arr2, result);
+    end = clock();
+    time_taken = ((double)(end - start)) / CLOCKS_PER_SEC;
+    printf("Time taken with optimization: %f seconds\n", time_taken);
+    free(arr1);
+    free(arr2);
+    free(result);
+    return 0;
+}
